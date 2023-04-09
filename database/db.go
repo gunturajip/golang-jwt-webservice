@@ -4,19 +4,25 @@ import (
 	"fmt"
 	"golang-jwt-auth/models"
 	"log"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var (
-	host     = "localhost"
-	user     = "postgres"
-	password = "postgres"
-	port     = "5432"
-	dbname   = "db-go-sql"
-	db       *gorm.DB
-	err      error
+	// host     = "localhost"
+	host = os.Getenv("PGHOST")
+	// user     = "postgres"
+	user = os.Getenv("PGUSER")
+	// password = "postgres"
+	password = os.Getenv("PGPASSWORD")
+	// port     = "5432"
+	port = os.Getenv("PGPORT")
+	// dbname   = "db-go-sql"
+	dbname = os.Getenv("PGDATABASE")
+	db     *gorm.DB
+	err    error
 )
 
 func StartDB() {
