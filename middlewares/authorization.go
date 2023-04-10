@@ -21,12 +21,9 @@ func ProductAuthorization() gin.HandlerFunc {
 			})
 			return
 		}
-		userData := c.MustGet("userData").(jwt.MapClaims)
-		userId := uint(userData["id"].(float64))
+
 		Product := models.Product{}
-
 		err = db.Select("user_id").First(&Product, uint(productId)).Error
-
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
 				"error":   "Data Not Found",
@@ -35,14 +32,33 @@ func ProductAuthorization() gin.HandlerFunc {
 			return
 		}
 
-		if Product.UserID != userId {
+		userData := c.MustGet("userData").(jwt.MapClaims)
+		admin := userData["admin"].(bool)
+		if !admin {
+			userId := uint(userData["id"].(float64))
+			if Product.UserID != userId {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"error":   "Unauthorized",
+					"message": "you are not allowed to access this data",
+				})
+				return
+			}
+		}
+		c.Next()
+	}
+}
+
+func ProductAuthorizationAll() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userData := c.MustGet("userData").(jwt.MapClaims)
+		admin := userData["admin"].(bool)
+		if !admin {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error":   "Unauthorized",
 				"message": "you are not allowed to access this data",
 			})
 			return
 		}
-
 		c.Next()
 	}
 }

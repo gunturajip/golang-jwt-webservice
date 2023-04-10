@@ -31,13 +31,9 @@ func GetProducts(c *gin.Context) {
 
 func GetProduct(c *gin.Context) {
 	db := database.GetDB()
-	userData := c.MustGet("userData").(jwt.MapClaims)
 
 	Product := models.Product{}
 	productId := c.Param("productId")
-	userId := uint(userData["id"].(float64))
-
-	Product.UserID = userId
 
 	err := db.Preload("User").First(&Product, "id = ?", productId).Error
 	if err != nil {
@@ -66,6 +62,7 @@ func CreateProduct(c *gin.Context) {
 			"error":   "Not Found",
 			"message": errA.Error(),
 		})
+		return
 	}
 
 	contentType := helpers.GetContentType(c)
@@ -94,19 +91,9 @@ func CreateProduct(c *gin.Context) {
 
 func UpdateProduct(c *gin.Context) {
 	db := database.GetDB()
-	userData := c.MustGet("userData").(jwt.MapClaims)
 
 	Product := models.Product{}
 	productId := c.Param("productId")
-	userId := uint(userData["id"].(float64))
-	User := models.User{}
-	errA := db.First(&User, "id = ?", userId).Error
-	if errA != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error":   "Not Found",
-			"message": errA.Error(),
-		})
-	}
 
 	contentType := helpers.GetContentType(c)
 	if contentType == appJSON {
@@ -114,9 +101,6 @@ func UpdateProduct(c *gin.Context) {
 	} else {
 		c.ShouldBind(&Product)
 	}
-
-	Product.UserID = userId
-	Product.User = &User
 
 	err := db.Model(&Product).Where("id = ?", productId).Updates(models.Product{Title: Product.Title, Description: Product.Description}).Error
 	if err != nil {
@@ -133,22 +117,9 @@ func UpdateProduct(c *gin.Context) {
 
 func DeleteProduct(c *gin.Context) {
 	db := database.GetDB()
-	userData := c.MustGet("userData").(jwt.MapClaims)
 
 	Product := models.Product{}
 	productId := c.Param("productId")
-	userId := uint(userData["id"].(float64))
-	User := models.User{}
-	errA := db.First(&User, "id = ?", userId).Error
-	if errA != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error":   "Not Found",
-			"message": errA.Error(),
-		})
-	}
-
-	Product.UserID = userId
-	Product.User = &User
 
 	err := db.Where("id = ?", productId).Delete(&Product).Error
 	if err != nil {
