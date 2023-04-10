@@ -15,7 +15,7 @@ func GetProducts(c *gin.Context) {
 
 	Product := []models.Product{}
 
-	err := db.Find(&Product).Error
+	err := db.Preload("User").Find(&Product).Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
@@ -36,7 +36,7 @@ func GetProduct(c *gin.Context) {
 
 	Product.UserID = userId
 
-	err := db.First(&Product, "id = ?", productId).Error
+	err := db.Preload("User").First(&Product, "id = ?", productId).Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
@@ -53,6 +53,14 @@ func CreateProduct(c *gin.Context) {
 
 	Product := models.Product{}
 	userId := uint(userData["id"].(float64))
+	User := models.User{}
+	errA := db.First(&User, "id = ?", userId).Error
+	if errA != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":   "Not Found",
+			"message": errA.Error(),
+		})
+	}
 
 	contentType := helpers.GetContentType(c)
 	if contentType == appJSON {
@@ -62,6 +70,7 @@ func CreateProduct(c *gin.Context) {
 	}
 
 	Product.UserID = userId
+	Product.User = &User
 
 	err := db.Create(&Product).Error
 	if err != nil {
@@ -81,6 +90,14 @@ func UpdateProduct(c *gin.Context) {
 	Product := models.Product{}
 	productId := c.Param("productId")
 	userId := uint(userData["id"].(float64))
+	User := models.User{}
+	errA := db.First(&User, "id = ?", userId).Error
+	if errA != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":   "Not Found",
+			"message": errA.Error(),
+		})
+	}
 
 	contentType := helpers.GetContentType(c)
 	if contentType == appJSON {
@@ -90,7 +107,7 @@ func UpdateProduct(c *gin.Context) {
 	}
 
 	Product.UserID = userId
-	// Product.ID = uint(productId)
+	Product.User = &User
 
 	err := db.Model(&Product).Where("id = ?", productId).Updates(models.Product{Title: Product.Title, Description: Product.Description}).Error
 	if err != nil {
@@ -110,8 +127,17 @@ func DeleteProduct(c *gin.Context) {
 	Product := models.Product{}
 	productId := c.Param("productId")
 	userId := uint(userData["id"].(float64))
+	User := models.User{}
+	errA := db.First(&User, "id = ?", userId).Error
+	if errA != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":   "Not Found",
+			"message": errA.Error(),
+		})
+	}
 
 	Product.UserID = userId
+	Product.User = &User
 
 	err := db.Where("id = ?", productId).Delete(&Product).Error
 	if err != nil {
