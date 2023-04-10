@@ -18,11 +18,11 @@ func (p *Product) BeforeCreate(tx *gorm.DB) (err error) {
 
 	if errCreate != nil {
 		err = errCreate
-		return
+		return err
 	}
 
 	err = nil
-	return
+	return err
 }
 
 func (p *Product) BeforeUpdate(tx *gorm.DB) (err error) {
@@ -30,9 +30,9 @@ func (p *Product) BeforeUpdate(tx *gorm.DB) (err error) {
 
 	if errUpdate != nil {
 		err = errUpdate
-		return
+		return err
 	}
 
 	err = nil
-	return
+	return err
 }

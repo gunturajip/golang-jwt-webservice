@@ -23,7 +23,10 @@ func GetProducts(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, Product)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "successfully get products",
+		"data":    Product,
+	})
 }
 
 func GetProduct(c *gin.Context) {
@@ -44,7 +47,10 @@ func GetProduct(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, Product)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "successfully get product",
+		"data":    Product,
+	})
 }
 
 func CreateProduct(c *gin.Context) {
@@ -80,7 +86,10 @@ func CreateProduct(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusCreated, Product)
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "successfully created product",
+		"data":    Product,
+	})
 }
 
 func UpdateProduct(c *gin.Context) {
@@ -117,7 +126,9 @@ func UpdateProduct(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, Product)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "successfully updated product",
+	})
 }
 
 func DeleteProduct(c *gin.Context) {
@@ -147,5 +158,7 @@ func DeleteProduct(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, Product)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "successfully deleted product",
+	})
 }
