@@ -1,4 +1,4 @@
 .env
-entity
-repository
-service
+/entity
+/repository
+/service
