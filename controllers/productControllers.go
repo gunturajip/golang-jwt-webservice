@@ -10,6 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetProducts godoc
+// @Summary Get all products
+// @Description Get all products data by admin
+// @Tags products
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.Product
+// @Router /products [get]
 func GetProducts(c *gin.Context) {
 	db := database.GetDB()
 
@@ -29,6 +37,15 @@ func GetProducts(c *gin.Context) {
 	})
 }
 
+// GetProduct godoc
+// @Summary Get product details for the given id
+// @Description Get details of a product corresponding to the input id
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param Id path int true "ID of the product"
+// @Success 200 {object} models.Product
+// @Router /products/{Id} [get]
 func GetProduct(c *gin.Context) {
 	db := database.GetDB()
 
@@ -49,6 +66,15 @@ func GetProduct(c *gin.Context) {
 	})
 }
 
+// CreateProduct godoc
+// @Summary Post product details for the given id
+// @Description Post details of a product corresponding to the input id
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param models.Product body models.Product true "create a product"
+// @Success 200 {object} models.Product
+// @Router /products [post]
 func CreateProduct(c *gin.Context) {
 	db := database.GetDB()
 	userData := c.MustGet("userData").(jwt.MapClaims)
@@ -89,6 +115,15 @@ func CreateProduct(c *gin.Context) {
 	})
 }
 
+// UpdateProduct godoc
+// @Summary Update product for the given id
+// @Description Update details of a product corresponding to the input id
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param Id path int true "ID of the product"
+// @Success 200 {object} models.Product
+// @Router /products/{Id} [put]
 func UpdateProduct(c *gin.Context) {
 	db := database.GetDB()
 
@@ -115,6 +150,15 @@ func UpdateProduct(c *gin.Context) {
 	})
 }
 
+// DeleteProduct godoc
+// @Summary Delete product details for a given id
+// @Description Delete details of a product corresponding to the input id
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param Id path int true "ID of the product"
+// @Success 200 {object} models.Product
+// @Router /products/{Id} [delete]
 func DeleteProduct(c *gin.Context) {
 	db := database.GetDB()
 
